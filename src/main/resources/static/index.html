@@ -2,98 +2,38 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PMV - Tienda de Música CEA</title>
+    <title>PMV Tienda de Música CEA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        function mostrarSeccion(id) {
-            document.getElementById('hu005').classList.add('hidden');
-            document.getElementById('hu003').classList.add('hidden');
-            document.getElementById('hu002').classList.add('hidden');
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        async function registrarArtista() {
-            const data = {
-                tipo: document.getElementById('tipoArt').value,
-                nombre: document.getElementById('nomArt').value,
-                pais: document.getElementById('paisArt').value,
-                integrantes: document.getElementById('intArt').value
-            };
-            const response = await fetch('/api/artistas', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+        async function api(path, method, body) {
+            const res = await fetch('/api' + path, {
+                method, headers: {'Content-Type': 'application/json'},
+                body: body ? JSON.stringify(body) : null
             });
-            const text = await response.text();
-            alert(text);
-        }
-
-        async function registrarDisco() {
-            const data = {
-                upc: document.getElementById('upcDisc').value,
-                titulo: document.getElementById('titDisc').value,
-                stock: document.getElementById('stockDisc').value
-            };
-            const response = await fetch('/api/discos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const text = await response.text();
-            alert(text);
-        }
-
-        async function procesarVenta() {
-            const upc = document.getElementById('upcVenta').value;
-            const response = await fetch('/api/ventas/' + upc, { method: 'POST' });
-            const text = await response.text();
-            alert(text);
+            alert(await res.text());
         }
     </script>
 </head>
-<body class="bg-gray-100 p-8 font-sans">
-    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-        <div class="bg-indigo-700 text-white p-6">
-            <h1 class="text-2xl font-bold">Sistema de Gestión - Tienda de Música CEA</h1>
-            <p class="text-sm opacity-80">Prototipo Funcional Integrado - Sprint 1 (Desarrolladora: Rosary Carmona)</p>
-        </div>
-        
-        <div class="flex border-b bg-gray-50">
-            <button onclick="mostrarSeccion('hu005')" class="flex-1 py-3 font-semibold text-gray-700 hover:bg-gray-200">1. Artistas (HU-005)</button>
-            <button onclick="mostrarSeccion('hu003')" class="flex-1 py-3 font-semibold text-gray-700 hover:bg-gray-200 border-l">2. Catálogo (HU-003)</button>
-            <button onclick="mostrarSeccion('hu002')" class="flex-1 py-3 font-semibold text-gray-700 hover:bg-gray-200 border-l">3. Ventas (HU-002)</button>
+<body class="bg-gray-100 p-10 font-sans">
+    <div class="max-w-xl mx-auto space-y-8">
+        <div class="bg-white p-6 rounded-xl shadow-md">
+            <h2 class="text-xl font-bold mb-4 border-b">1. Registro de Artistas (HU-005)</h2>
+            <input id="nArt" placeholder="Nombre Artista" class="w-full p-2 border mb-2">
+            <button onclick="api('/artistas', 'POST', {nombre: nArt.value})" class="bg-blue-600 text-white p-2 rounded w-full">Guardar Artista</button>
         </div>
 
-        <div class="p-6">
-            <div id="hu005" class="block">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">Registro de Artistas</h2>
-                <div class="space-y-4">
-                    <select id="tipoArt" class="w-full p-2 border rounded"><option value="Grupo">Grupo Musical</option><option value="Solista">Solista</option></select>
-                    <input id="nomArt" type="text" placeholder="Nombre" class="w-full p-2 border rounded" value="The Rockers">
-                    <input id="paisArt" type="text" placeholder="País" class="w-full p-2 border rounded" value="Reino Unido">
-                    <textarea id="intArt" placeholder="Integrantes" class="w-full p-2 border rounded">John, Paul, George, Ringo</textarea>
-                    <button onclick="registrarArtista()" class="bg-blue-600 text-white px-4 py-2 rounded font-bold w-full hover:bg-blue-700">Guardar Artista</button>
-                </div>
-            </div>
+        <div class="bg-white p-6 rounded-xl shadow-md">
+            <h2 class="text-xl font-bold mb-4 border-b">2. Catálogo Maestro (HU-003)</h2>
+            <input id="uD" placeholder="UPC-12345" class="w-full p-2 border mb-2 uppercase">
+            <input id="tD" placeholder="Título" class="w-full p-2 border mb-2">
+            <input id="sD" type="number" placeholder="Stock" class="w-full p-2 border mb-2">
+            <button onclick="api('/discos', 'POST', {upc: uD.value, titulo: tD.value, stock: sD.value})" class="bg-green-600 text-white p-2 rounded w-full">Registrar Disco</button>
+        </div>
 
-            <div id="hu003" class="hidden">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">Registro de Obras</h2>
-                <div class="space-y-4">
-                    <input id="upcDisc" type="text" placeholder="Código UPC" class="w-full p-2 border rounded" value="UPC-12345">
-                    <input id="titDisc" type="text" placeholder="Título del Álbum" class="w-full p-2 border rounded" value="Grandes Éxitos">
-                    <input id="stockDisc" type="number" placeholder="Stock" class="w-full p-2 border rounded" value="5">
-                    <button onclick="registrarDisco()" class="bg-green-600 text-white px-4 py-2 rounded font-bold w-full hover:bg-green-700">Guardar Disco</button>
-                </div>
-            </div>
-
-            <div id="hu002" class="hidden">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">Terminal de Ventas</h2>
-                <div class="space-y-4">
-                    <input id="upcVenta" type="text" placeholder="Buscar Código UPC" class="w-full p-2 border rounded font-mono" value="UPC-12345">
-                    <button onclick="procesarVenta()" class="bg-purple-600 text-white px-4 py-2 rounded font-bold w-full hover:bg-purple-700">Procesar Venta y Descontar Stock</button>
-                </div>
-            </div>
+        <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-black">
+            <h2 class="text-xl font-bold mb-4 border-b">3. Terminal de Ventas (HU-002)</h2>
+            <input id="uV" placeholder="Ingrese UPC" class="w-full p-2 border mb-2 uppercase">
+            <button onclick="api('/ventas/'+uV.value, 'POST')" class="bg-black text-white p-2 rounded w-full">Confirmar Venta (Restar Stock)</button>
         </div>
     </div>
 </body>
