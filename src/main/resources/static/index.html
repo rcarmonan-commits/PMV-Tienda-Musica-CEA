@@ -2,15 +2,99 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>PMV - Tienda de Música CEA - Rosary Carmona</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMV - Tienda de Música CEA</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function mostrarSeccion(id) {
+            document.getElementById('hu005').classList.add('hidden');
+            document.getElementById('hu003').classList.add('hidden');
+            document.getElementById('hu002').classList.add('hidden');
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        async function registrarArtista() {
+            const data = {
+                tipo: document.getElementById('tipoArt').value,
+                nombre: document.getElementById('nomArt').value,
+                pais: document.getElementById('paisArt').value,
+                integrantes: document.getElementById('intArt').value
+            };
+            const response = await fetch('/api/artistas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const text = await response.text();
+            alert(text);
+        }
+
+        async function registrarDisco() {
+            const data = {
+                upc: document.getElementById('upcDisc').value,
+                titulo: document.getElementById('titDisc').value,
+                stock: document.getElementById('stockDisc').value
+            };
+            const response = await fetch('/api/discos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const text = await response.text();
+            alert(text);
+        }
+
+        async function procesarVenta() {
+            const upc = document.getElementById('upcVenta').value;
+            const response = await fetch('/api/ventas/' + upc, { method: 'POST' });
+            const text = await response.text();
+            alert(text);
+        }
+    </script>
 </head>
-<body class="bg-slate-100 p-8 font-sans">
-    <div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-md border border-slate-200">
-        <h1 class="text-3xl font-black text-slate-800 mb-6 border-b pb-4">Terminal de Ventas y Catálogo</h1>
-        <p class="text-slate-600 mb-4">Interfaz conectada al servidor Spring Boot para la gestión de inventario musical.</p>
-        <button class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold w-full mb-4">Registrar Venta (Descontar Stock)</button>
-        <button class="bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold w-full">Añadir Nuevo Disco al Catálogo</button>
+<body class="bg-gray-100 p-8 font-sans">
+    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="bg-indigo-700 text-white p-6">
+            <h1 class="text-2xl font-bold">Sistema de Gestión - Tienda de Música CEA</h1>
+            <p class="text-sm opacity-80">Prototipo Funcional Integrado - Sprint 1 (Desarrolladora: Rosary Carmona)</p>
+        </div>
+        
+        <div class="flex border-b bg-gray-50">
+            <button onclick="mostrarSeccion('hu005')" class="flex-1 py-3 font-semibold text-gray-700 hover:bg-gray-200">1. Artistas (HU-005)</button>
+            <button onclick="mostrarSeccion('hu003')" class="flex-1 py-3 font-semibold text-gray-700 hover:bg-gray-200 border-l">2. Catálogo (HU-003)</button>
+            <button onclick="mostrarSeccion('hu002')" class="flex-1 py-3 font-semibold text-gray-700 hover:bg-gray-200 border-l">3. Ventas (HU-002)</button>
+        </div>
+
+        <div class="p-6">
+            <div id="hu005" class="block">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Registro de Artistas</h2>
+                <div class="space-y-4">
+                    <select id="tipoArt" class="w-full p-2 border rounded"><option value="Grupo">Grupo Musical</option><option value="Solista">Solista</option></select>
+                    <input id="nomArt" type="text" placeholder="Nombre" class="w-full p-2 border rounded" value="The Rockers">
+                    <input id="paisArt" type="text" placeholder="País" class="w-full p-2 border rounded" value="Reino Unido">
+                    <textarea id="intArt" placeholder="Integrantes" class="w-full p-2 border rounded">John, Paul, George, Ringo</textarea>
+                    <button onclick="registrarArtista()" class="bg-blue-600 text-white px-4 py-2 rounded font-bold w-full hover:bg-blue-700">Guardar Artista</button>
+                </div>
+            </div>
+
+            <div id="hu003" class="hidden">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Registro de Obras</h2>
+                <div class="space-y-4">
+                    <input id="upcDisc" type="text" placeholder="Código UPC" class="w-full p-2 border rounded" value="UPC-12345">
+                    <input id="titDisc" type="text" placeholder="Título del Álbum" class="w-full p-2 border rounded" value="Grandes Éxitos">
+                    <input id="stockDisc" type="number" placeholder="Stock" class="w-full p-2 border rounded" value="5">
+                    <button onclick="registrarDisco()" class="bg-green-600 text-white px-4 py-2 rounded font-bold w-full hover:bg-green-700">Guardar Disco</button>
+                </div>
+            </div>
+
+            <div id="hu002" class="hidden">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Terminal de Ventas</h2>
+                <div class="space-y-4">
+                    <input id="upcVenta" type="text" placeholder="Buscar Código UPC" class="w-full p-2 border rounded font-mono" value="UPC-12345">
+                    <button onclick="procesarVenta()" class="bg-purple-600 text-white px-4 py-2 rounded font-bold w-full hover:bg-purple-700">Procesar Venta y Descontar Stock</button>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
